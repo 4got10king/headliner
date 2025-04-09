@@ -39,7 +39,9 @@ class ImageService:
         return str(output_path)
 
     @classmethod
-    async def generate_preview(cls, image: Image.Image, size: tuple[int, int] = (300, 300)) -> str:
+    async def generate_preview(
+        cls, image: Image.Image, size: tuple[int, int] = (300, 300)
+    ) -> str:
         """Генерация превью изображения"""
         storage_path = mq_settings.storage_path
         storage_path.mkdir(parents=True, exist_ok=True)
@@ -75,9 +77,13 @@ class ImageService:
             async with MQContext() as mq:
                 await mq.publish_result(str(task.task_id), "success", result)
 
-            return ImageTaskResult(task_id=task.task_id, status="success", result=result)
+            return ImageTaskResult(
+                task_id=task.task_id, status="success", result=result
+            )
         except Exception as e:
             async with MQContext() as mq:
                 await mq.publish_result(str(task.task_id), "error", {"error": str(e)})
 
-            return ImageTaskResult(task_id=task.task_id, status="error", result={"error": str(e)})
+            return ImageTaskResult(
+                task_id=task.task_id, status="error", result={"error": str(e)}
+            )

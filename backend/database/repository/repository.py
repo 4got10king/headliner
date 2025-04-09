@@ -3,8 +3,7 @@ from typing import TypeVar
 from uuid import UUID
 
 from pydantic import BaseModel
-from sqlalchemy import (RowMapping, delete, insert, literal_column, select,
-                        update)
+from sqlalchemy import RowMapping, delete, insert, literal_column, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.db_metadata import Base
@@ -32,12 +31,22 @@ class SQLAlchemyRepository(AbstractRepository):
         return res.mappings().first()
 
     async def edit_one(self, id: int, data: dict) -> RowMapping | None:
-        stmt = update(self.model).values(**data).filter_by(id=id).returning(literal_column("*"))
+        stmt = (
+            update(self.model)
+            .values(**data)
+            .filter_by(id=id)
+            .returning(literal_column("*"))
+        )
         res = await self.session.execute(stmt)
         return res.mappings().first()
 
     async def edit_by_filter(self, filters: dict, data: dict) -> ResultType | None:
-        stmt_update = update(self.model).values(**data).filter_by(**filters).returning(self.model.id)
+        stmt_update = (
+            update(self.model)
+            .values(**data)
+            .filter_by(**filters)
+            .returning(self.model.id)
+        )
         result = await self.session.execute(stmt_update)
         ids = result.scalars().all()
 
@@ -71,7 +80,12 @@ class SQLAlchemyRepository(AbstractRepository):
         await self.session.execute(stmt)
 
     async def soft_delete(self, id: int) -> int:
-        stmt = update(self.model).filter_by(id=id).values(is_active=False).returning(self.model)
+        stmt = (
+            update(self.model)
+            .filter_by(id=id)
+            .values(is_active=False)
+            .returning(self.model)
+        )
         result = (await self.session.execute(stmt)).scalar()
         return result
 

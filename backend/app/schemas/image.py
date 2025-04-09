@@ -15,7 +15,9 @@ class ImageTaskRequest(BaseModel):
     """Схема входящего сообщения из очереди"""
 
     task_id: UUID = Field(..., description="Уникальный идентификатор задачи")
-    action: ImageAction = Field(..., description="Тип действия для обработки изображения")
+    action: ImageAction = Field(
+        ..., description="Тип действия для обработки изображения"
+    )
     image_url: str = Field(..., description="URL изображения для обработки")
 
 

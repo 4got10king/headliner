@@ -26,9 +26,13 @@ class DatabaseAccessor:
 
     def run(self) -> None:
         """Инициализация подключения к базе данных"""
-        self._engine = create_async_engine(self._database_url, connect_args={"check_same_thread": False}, echo=False)
+        self._engine = create_async_engine(
+            self._database_url, connect_args={"check_same_thread": False}, echo=False
+        )
 
-        self._async_session_maker = sessionmaker(bind=self._engine, expire_on_commit=False, class_=AsyncSession)
+        self._async_session_maker = sessionmaker(
+            bind=self._engine, expire_on_commit=False, class_=AsyncSession
+        )
 
     async def stop(self) -> None:
         """Закрытие соединения с базой данных"""

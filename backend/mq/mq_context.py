@@ -29,7 +29,9 @@ class MQContext:
         if not self.channel:
             raise RuntimeError("MQContext is not connected")
 
-        result_queue = await self.channel.declare_queue("image_task_result", durable=True)
+        result_queue = await self.channel.declare_queue(
+            "image_task_result", durable=True
+        )
         message = {"task_id": task_id, "status": status, "result": result}
         await self.channel.default_exchange.publish(
             aio_pika.Message(
